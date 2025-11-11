@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ESP8266 IoT Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    button { padding: 10px 20px; margin-right: 10px; }
+    #status { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>ESP8266 IoT Demo</h2>
+  <button onclick="sendOn()">Turn ON</button>
+  <button onclick="sendOff()">Turn OFF</button>
+  <div id="status">Status: unknown</div>
+
+  <script>
+    async function sendOn(){
+      await fetch('/api/on');
+      updateStatus();
+    }
+    async function sendOff(){
+      await fetch('/api/off');
+      updateStatus();
+    }
+    async function updateStatus(){
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('status').innerText = 'Status: ' + (data.status || 'unknown');
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    // 每2秒刷新状态
+    setInterval(updateStatus, 2000);
+    updateStatus();
+  </script>
+</body>
+</html>
